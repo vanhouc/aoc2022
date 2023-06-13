@@ -1,7 +1,7 @@
 fn main() {
     let mut elf: Vec<u64> = include_str!("input.txt")
         .lines()
-        .collect::<Vec<_>>()
+        .collect::<Vec<&str>>()
         .split(|line| line.is_empty())
         .map(|group| {
             group

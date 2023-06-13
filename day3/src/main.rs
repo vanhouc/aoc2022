@@ -1,23 +1,29 @@
 use std::collections::HashSet;
 
+use itertools::Itertools;
+
 fn main() {
     let items: Vec<char> = ('a'..='z').chain('A'..='Z').collect();
     let input = include_str!("input.txt");
 
     let sum: usize = input
         .lines()
-        .filter_map(|line| {
-            let (first, second) = line.split_at(line.len() / 2);
-            let first: HashSet<char> = first.chars().collect();
-            let second: HashSet<char> = second.chars().collect();
-            Some(
+        .map(|line| -> HashSet<char> { line.chars().collect() })
+        .chunks(3)
+        .into_iter()
+        .filter_map(|chunk| {
+            let (first, second, third) = chunk.collect_tuple()?;
+            Some::<usize>(
                 first
                     .intersection(&second)
-                    .find_map(|c| items.iter().position(|i| i == c))?
+                    .copied()
+                    .collect::<HashSet<char>>()
+                    .intersection(&third)
+                    .filter_map(|c| items.iter().position(|i| i == c))
+                    .sum::<usize>()
                     + 1,
             )
         })
-        .sum();
-
-    println!("{:?}", sum)
+        .sum::<usize>();
+    println!("{sum}")
 }

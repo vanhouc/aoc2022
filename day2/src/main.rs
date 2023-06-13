@@ -6,14 +6,14 @@ enum Rps {
     Scissors,
 }
 
-impl TryFrom<char> for Rps {
+impl TryFrom<&str> for Rps {
     type Error = RockPaperScissorsError;
 
-    fn try_from(value: char) -> Result<Self, Self::Error> {
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
-            'A' | 'X' => Ok(Rps::Rock),
-            'B' | 'Y' => Ok(Rps::Paper),
-            'C' | 'Z' => Ok(Rps::Scissors),
+            "A" | "X" => Ok(Rps::Rock),
+            "B" | "Y" => Ok(Rps::Paper),
+            "C" | "Z" => Ok(Rps::Scissors),
             _ => Err(RockPaperScissorsError::InvalidCharacter),
         }
     }
@@ -61,16 +61,8 @@ fn main() {
             let (opponent, player) = line
                 .split_once(' ')
                 .ok_or(RockPaperScissorsError::ParsingError)?;
-            let opponent: Rps = opponent
-                .chars()
-                .next()
-                .ok_or(RockPaperScissorsError::ParsingError)?
-                .try_into()?;
-            let player: Rps = player
-                .chars()
-                .next()
-                .ok_or(RockPaperScissorsError::ParsingError)?
-                .try_into()?;
+            let opponent: Rps = opponent.try_into()?;
+            let player: Rps = player.try_into()?;
             Ok(score_round(opponent, player))
         })
         .sum();

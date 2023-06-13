@@ -1,5 +1,5 @@
 fn main() {
-    let elf = include_str!("input.txt")
+    let mut elf: Vec<u64> = include_str!("input.txt")
         .lines()
         .collect::<Vec<_>>()
         .split(|line| line.is_empty())
@@ -9,6 +9,7 @@ fn main() {
                 .filter_map(|v| v.parse::<u64>().ok())
                 .sum::<u64>()
         })
-        .max();
-    println!("{elf:?}");
+        .collect();
+    elf.sort();
+    println!("{:?}", elf.iter().rev().take(3).sum::<u64>());
 }

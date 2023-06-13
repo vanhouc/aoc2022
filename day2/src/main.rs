@@ -11,9 +11,27 @@ impl TryFrom<&str> for Rps {
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
-            "A" | "X" => Ok(Rps::Rock),
-            "B" | "Y" => Ok(Rps::Paper),
-            "C" | "Z" => Ok(Rps::Scissors),
+            "A" => Ok(Rps::Rock),
+            "B" => Ok(Rps::Paper),
+            "C" => Ok(Rps::Scissors),
+            _ => Err(RockPaperScissorsError::InvalidCharacter),
+        }
+    }
+}
+enum Outcome {
+    Win,
+    Lose,
+    Draw,
+}
+
+impl TryFrom<&str> for Outcome {
+    type Error = RockPaperScissorsError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "X" => Ok(Outcome::Lose),
+            "Y" => Ok(Outcome::Draw),
+            "Z" => Ok(Outcome::Win),
             _ => Err(RockPaperScissorsError::InvalidCharacter),
         }
     }
@@ -53,17 +71,33 @@ fn score_round(opponent: Rps, player: Rps) -> u32 {
     }
 }
 
+fn score_outcome(opponent: Rps, outcome: Outcome) -> u32 {
+    match outcome {
+        Outcome::Win => match opponent {
+            Rps::Rock => score_round(opponent, Rps::Paper),
+            Rps::Paper => score_round(opponent, Rps::Scissors),
+            Rps::Scissors => score_round(opponent, Rps::Rock),
+        },
+        Outcome::Lose => match opponent {
+            Rps::Rock => score_round(opponent, Rps::Scissors),
+            Rps::Paper => score_round(opponent, Rps::Rock),
+            Rps::Scissors => score_round(opponent, Rps::Paper),
+        },
+        Outcome::Draw => score_round(opponent, opponent),
+    }
+}
+
 fn main() {
     let strategy = include_str!("input.txt");
     let score: Result<u32, RockPaperScissorsError> = strategy
         .lines()
         .map(|line| {
-            let (opponent, player) = line
+            let (opponent, outcome) = line
                 .split_once(' ')
                 .ok_or(RockPaperScissorsError::ParsingError)?;
             let opponent: Rps = opponent.try_into()?;
-            let player: Rps = player.try_into()?;
-            Ok(score_round(opponent, player))
+            let outcome: Outcome = outcome.try_into()?;
+            Ok(score_outcome(opponent, outcome))
         })
         .sum();
     println!("{score:?}")

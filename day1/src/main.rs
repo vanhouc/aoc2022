@@ -1,3 +1,10 @@
+use std::env;
+
+struct Elf {
+    total_calories: u32,
+}
+
 fn main() {
-    println!("Hello, world!");
+    let input = std::fs::read_to_string("src/input.txt").unwrap();
+    println!("{input}")
 }

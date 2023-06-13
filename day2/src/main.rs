@@ -45,7 +45,7 @@ enum RockPaperScissorsError {
     InvalidCharacter,
 }
 
-fn score_round(opponent: Rps, player: Rps) -> u32 {
+fn score_round(opponent: &Rps, player: &Rps) -> u32 {
     match player {
         Rps::Rock => {
             1 + match opponent {
@@ -74,16 +74,16 @@ fn score_round(opponent: Rps, player: Rps) -> u32 {
 fn score_outcome(opponent: Rps, outcome: Outcome) -> u32 {
     match outcome {
         Outcome::Win => match opponent {
-            Rps::Rock => score_round(opponent, Rps::Paper),
-            Rps::Paper => score_round(opponent, Rps::Scissors),
-            Rps::Scissors => score_round(opponent, Rps::Rock),
+            Rps::Rock => score_round(&opponent, &Rps::Paper),
+            Rps::Paper => score_round(&opponent, &Rps::Scissors),
+            Rps::Scissors => score_round(&opponent, &Rps::Rock),
         },
         Outcome::Lose => match opponent {
-            Rps::Rock => score_round(opponent, Rps::Scissors),
-            Rps::Paper => score_round(opponent, Rps::Rock),
-            Rps::Scissors => score_round(opponent, Rps::Paper),
+            Rps::Rock => score_round(&opponent, &Rps::Scissors),
+            Rps::Paper => score_round(&opponent, &Rps::Rock),
+            Rps::Scissors => score_round(&opponent, &Rps::Paper),
         },
-        Outcome::Draw => score_round(opponent, opponent),
+        Outcome::Draw => score_round(&opponent, &opponent),
     }
 }
 
